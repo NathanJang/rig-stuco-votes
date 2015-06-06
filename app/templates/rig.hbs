@@ -16,5 +16,19 @@
       </div>
     {{/each}}
   </div>
-  <button class="btn btn-primary" disabled={{controller.shouldDisableSubmitButton}} {{action 'submit' model}}>Submit</button>
+  <div class="form-group">
+    <label>
+      {{input type='checkbox' checked=controller.isAgreed}}
+      <strong class="text-danger">I understand that clicking "Submit" will probably change the vote of the person whose ID card number is entered. I understand that this action has consequences, and I take responsibility for it.</strong>
+    </label>
+    <small>Actually, the server doesn't even check if it's a real ID card number, so you can type in whatever you want and it will probably get counted. See {{#link-to 'about'}}About{{/link-to}}.</small>
+  </div>
+
+  <button {{bind-attr class=':btn controller.isDoneSubmitting:btn-success:btn-primary'}} disabled={{controller.shouldDisableSubmitButton}} {{action 'submit' model}}>
+    {{#if controller.isDoneSubmitting}}
+      Done
+    {{else}}
+      Submit
+    {{/if}}
+  </button>
 </form>

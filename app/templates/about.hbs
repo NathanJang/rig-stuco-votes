@@ -1,0 +1,35 @@
+<h2>How does it work?</h2>
+<p>
+  When you submit a vote on the school's survey website, it sends in your ID card number and your votes in a <code>POST</code> request.
+  <strong>That's all that is required for submitting a vote.</strong>
+  Someone could use your ID card number to vote for you or change your votes without your knowledge.
+</p>
+<p>
+  In theory, someone could use this method to change a large number of votes to influence the election with a list of ID card numbers, which I'm sure the library has.
+  Actually, <strong>the server doesn't even check if it's a valid ID card number.</strong>
+  Someone could repeatedly send in fake "votes" with random ID card numbers and they would be saved (and probably counted) along with the other votes.
+</p>
+
+<h2>Technical details</h2>
+<p>
+  Simply send a <code>POST</code> request to the path <code>/saveelection.asp</code> on the same subdomain.
+  The body of the request should contain the following keys:
+  <ul>
+    <li><code>schoolyear</code>: The school years, currently <code>1415</code>.</li>
+    <li><code>studentnumber</code>: The student ID card number of the target. As aforementioned, the server does not validate this, so the vote will be saved under this number and possibly counted too.</li>
+    <li><code>OP<em>n</em></code>: Represents the candidate(s) chosen. For instance, the first option would have the key <code>OP1</code>. The value of this field is the full name of the candidate, for instance <code>John Smith</code>. The server appears to validate the full name for it to be saved. Multiple options can be sent in the same request.</li>
+  </ul>
+  As usual, the body is sent <code>x-www-form-urlencoded</code>.
+</p>
+<p>
+  One can also retrieve previous votes by sending a similar <code>POST</code> request to the path <code>/surveytest.asp</code> with a similar body:
+  <ul>
+    <li><code>schoolyear</code></li>
+    <li><code>studentnumber</code></li>
+    <li><code>Vote</code>: An optional key with value <code>Vote</code> that is sent from the usual voting website.</li>
+  </ul>
+</p>
+<p>
+  To work around Cross-Origin-Resource-Security, this utility has a <code>/proxy</code> endpoint that forwards the request to the actual server.
+  Otherwise, the request is ultimately made by the user.
+</p>
